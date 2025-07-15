@@ -17,6 +17,9 @@ async def pedidos():
 
 @order_router.post("/pedido")
 async def criar_pedido(pedido_schema: PedidoSchema, session: Session = Depends(pegar_sessao)):
+    """
+    Essa é a rota padrão de criar pedidos do nosso sistema. Todas as rotas de criar pedidos precisam de autenticação
+    """
     novo_pedido = Pedido(usuario=pedido_schema.usuario)
     session.add(novo_pedido)
     session.commit()
@@ -24,6 +27,9 @@ async def criar_pedido(pedido_schema: PedidoSchema, session: Session = Depends(p
 
 @order_router.post("/pedido/cancelar/{id_pedido}")
 async def cancelar_pedido(id_pedido: int, session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão pra cancelar pedido do nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     pedido = session.query(Pedido).filter(Pedido.id==id_pedido).first()
     if not pedido:
         raise HTTPException(status_code=400, detail="Pedido não encontrado")
@@ -38,6 +44,9 @@ async def cancelar_pedido(id_pedido: int, session: Session = Depends(pegar_sessa
 
 @order_router.get("/listar")
 async def listar_pedidos(session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão pra listar pedidos do nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     if not usuario.admin:
         raise HTTPException(status_code=401, detail="Você não possui autorização para fazer essa operação")
     else:
@@ -49,6 +58,9 @@ async def listar_pedidos(session: Session = Depends(pegar_sessao), usuario: Usua
 
 @order_router.post("/pedido/adicionar-item/{id_pedido}")
 async def adicionar_item_pedido(id_pedido: int, item_pedido_schema: ItemPedidoSchema, session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão para adicionar item no pedido do nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     pedido = session.query(Pedido).filter(Pedido.id==id_pedido).first()
     if not pedido:
         raise HTTPException(status_code=400, detail="Pedido não existente")
@@ -67,6 +79,9 @@ async def adicionar_item_pedido(id_pedido: int, item_pedido_schema: ItemPedidoSc
 
 @order_router.post("/pedido/remover-item/{id_item_pedido}")
 async def remover_item_pedido(id_item_pedido: int, session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão para remover item do pedido no nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     item_pedido = session.query(ItemPedido).filter(ItemPedido.id==id_item_pedido).first()
     pedido = session.query(Pedido).filter(Pedido.id==item_pedido.pedido).first()
     if not item_pedido:
@@ -84,6 +99,9 @@ async def remover_item_pedido(id_item_pedido: int, session: Session = Depends(pe
 
 @order_router.post("/pedido/finalizar/{id_pedido}")
 async def finalizar_pedido(id_pedido: int, session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão de finalização do pedido do nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     pedido = session.query(Pedido).filter(Pedido.id==id_pedido).first()
     if not pedido:
         raise HTTPException(status_code=400, detail="Pedido não encontrado")
@@ -98,6 +116,9 @@ async def finalizar_pedido(id_pedido: int, session: Session = Depends(pegar_sess
 
 @order_router.get("/pedido/{id_pedido}")
 async def visualizar_pedido(id_pedido: int, session: Session = Depends(pegar_sessao), usuario: Usuario= Depends(verificar_token)):
+    """
+    Essa é a rota padrão de visualizar pedidos do nosso sistema. Todas as rotas do pedidos precisam de autenticação
+    """
     pedido = session.query(Pedido).filter(Pedido.id==id_pedido).first()
     if not pedido:
         raise HTTPException(status_code=400, detail="Pedido não encontrado")
